@@ -7,8 +7,9 @@ So the graphic driver decides which feature to support.
 This is where OpenGL differs from others:
 The driver manages the data.
 You as a developer, must use identifiers (HANDLES) to identify any data but YOU MUST NOT CARE ABOUT GPU DATA MANAGEMENT.
-To show something on the screen, you need to use and compose the primitives (dot, line, triangle...) to create a bigger composed object.
-The fastest primitive is the triangle and they optimized triangle for GPU especially.
+OpenGL <= 1.x Rendering Pipeline was using fixed functions only.
+OpenGL >= 2.x Rendering Pipeline slowly started to use programmable functions. (Shader)
+OpenGL >= 3.x Rendering Pipeline's fixed functions slowly getting deprecated.
 
 
 -- How OpenGL Works?
@@ -85,27 +86,38 @@ Because of being arbitrary, we have Vertex Array and Vertex Buffer object to use
 Only in pipeline vertex gets meaning, like life does.
 
 - Vertex Array Object
-Series of attributes. (example: position, color, normal...)
-Stores which Vertex Buffer Object and it's data will be used for each attribute.
+Stores series of attributes (example: position, color, normal...) and which Vertex Buffer Object (binding-index) bound to the attribute.
+So think as like: a connection to attribute to Vertex Buffer Object or binding-index which equals of saying "VERTEX BUFFER OBJECT".
 .
 - Vertex Buffer Object
-Stores actual vertex data.
+Stores raw vertex data.
 
 
 -- Primitive
-The main shapes that you will use no matter what.
+The main shapes (dot, triangle, patch...) that you will use no matter what.
 OR The meaning of: What a list of vertex data you just created actually means?
-(line? dot? triangle?)
+To show something on the screen, you need to use and compose the primitives (dot, line, triangle...) to create a bigger composed object.
+The fastest primitive is the triangle and they optimized triangle for GPU especially.
+That is because a decade ago, the Rendering Pipeline used triangles to render stuff.
 
 - Patch
 A primitive with a user-defined number of vertices.
 
 
--- Shader
-There is two meanings. (WHY DOESNT THE PEOPLE TELL THEM TO YOUUUU! OMG)
-Shader: User-defined program in the Rendering Pipeline that runs on GPU. (example: Vertex Shader, Tesellation Shaders, Geometry Shader...)
-Shader Program: Composed of Shaders that you created. (example: COMPOSE OF Vertex Shaders, Tesellation Shaders, Geometry Shaders...)
-That way, we are able to use different SHADER PROGRAM for different PRIMITIVE/VERTEX data.
+-- The Confusion of Shaders
+Yes, i heard you saying "A shader is a program running on GPU" AAAAAAAAAAAAAAAAAAAA THERE IS MORE THAN THAT! BE SPECIFIC!!!
+In OpenGL, you use UNITED of shaders to compile them.
+
+- Shader
+User-defined program that runs inside the Rendering Pipeline and GPU. (example: Vertex Shader, Tesellation Shaders, Geometry Shader...)
+Written in GLSL. (openGL Shading Language)
+
+- Shader Program
+Composed via UNITE OF SHADERS that you created. (example: UNITE OF;;;;; Vertex Shader, Tesellation Shader, Geometry Shader...)
+Only one type is allowed per shader. (ex: Only one Vertex Shader)
+Only one PROGRAM IS ALLOWED TO RUN AT A TIME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Bro, think it as a TOOL, it works exactly that way.
+So we are able to use different SHADER PROGRAM for different PRIMITIVE/VERTEX data.
 
 
 -- Fragment
@@ -117,18 +129,24 @@ Holds some informations:
 	Depth (Z value)...
 
 
+-- Coordinate System
+- View
+
+- Local
+
+
 -- Rendering Pipeline
 Sequence of steps for converting all vertex data to one image on your screen.
 A copy of data taken from your data and and each stage updates the copied data.
 So your actual data is untouched unless you use Transform Feedback, Compute Shader or Shader Storage Buffer Object (SSBO).
 
 1) Vertex Specification
-Creating vertex datas: Array Element Buffer (index buffer), Vertex Buffers, Transform Feedback Buffers.
-You will send vertex datas to Vertex Shader using Vertex Buffer Object in format of Vertex Array Object by calling draw commands.
+User creates raw vertex datas: Array Element Buffer (index buffer) Object(s), Vertex Buffer Object(s) with Vertex Array Object(s), Transform Feedback Buffer Object(s).
+User sends vertex data as primitives by calling draw commands.
 
 2) Vertex Shader
 Input: 1 vertex data.
-Process: Manipulate input.
+Process: Manipulate input and convert the vertex position to View Coordinate System.
 
 3) Tessellation Shader (OPTIONALLL)
 Input: Primitive Patch.
@@ -149,21 +167,22 @@ Process: Updates Vertex Buffer Object value that is on your side.
 Input: Vertex Datas with specificied format in draw call. (example: GL_TRIANGLE)
 Process: Grouping vertex data to primitives as you told in your program.
 
-7) Clipping, Perspective Divide and Viewport Transform
-Input: Primitive in Clip Space.
+7) Vertex Post-Processing: Clipping, Perspective Divide, Viewport Transform
+Input: Primitive.
 Process:
 	Crop anything outside the camera's field of view.
-	Calculate Normalized Device Coordinates (NDC) of input. (normalized position of the vertex between -1 and 1 where 0 assumed as middle)
+	Convert vertex positions to Normalized Device Coordinates (NDC) . (normalized position of the vertex between -1 and 1 where 0 assumed as middle)
 	Convert Normalized Device Coordinates to Viewport Coordinates (Window).
+	If Face Culling is enabled, do Face Culling
 
 8) Rasterizer
-Input: Primitive that holds the positions for Viewport Coordinates.
+Input: Primitive.
 Process:
-	Create fragments from input.
+	Creates fragments.
 
 9) Fragment Shader
 Input: Fragment
-Process: Manipulate or discard input.
+Process: Manipulate or delete input.
 
 10) Pre-Sample Processing
 Input: Fragment
@@ -178,6 +197,18 @@ If fails, DISCARD BABY
 	Write Mask...
 
 Now the fragments will be used in Frame Buffer to generate actual pixells.
+
+
+-- Face Culling
+Primitives have faces. (imagine a filled triangle, sometimes we want/can see (render) the just one face of the it because WHY NOT?)
+This technique just takes the part of choosen visible face using Cross Product vector math.
+To make culling face switch, they just did a logic of "Clockwise/Counter Clockwise order" which means an array of vertex data is not inverted or inverted on screen.
+Front Face = (GL_CCW) Counter clockwise order of vertex datas.
+Back Face = (GL_CW) Clockwise order of vertex datas.
+
+
+-- Mesh
+A data list of vertex.
 
 
 -- Glossary
@@ -212,12 +243,11 @@ Create identifier for vertex array(s).
 Use identifier data as vertex array.
 
 - glBindVertexBuffer
-Use THAT Vertex Buffer Object when THAT binding-index is used.
-Damn it to whoever thought its a good idea but, you need to tell what is the format of the Vertex Buffer Object.
+Use Vertex Buffer Object data when THAT binding-index is used. (binding-index = vertex buffer object)
 
 - glVertexAttribBinding
-Use THAT Vertex Buffer Object when THAT attribute is used. (n -> vbo)
-If not used, (n -> attribute)
+Use binding-index data when THAT attribute (position, normal etc...) is used. (attribute USES binding-index)
+If not used, (attribute = binding-index)
 
 - glVertexAttribFormat
 For THAT attribute, tell where is the data and how data is stored at the Vertex Buffer Object.
@@ -230,11 +260,24 @@ Target for vertex data.
 Must be used with Vertex Array Object.
 
 - glDrawArrays
-Reads from GL_ARRAY_BUFFER and passes to pipeline.
+Reads from Vertex Array Object and passes to pipeline.
+The last two parameters are selection of part of your data.
+From the first parameter, it understands how many vertex a primitive needs.
 
 - Interpolated
 The calculated value.
 Example: in a triangle there is 3 vertex data and each of it has different colors. But only one color will be out. So the middle color will be INTERPOLATED/CALCULATED FROM IT.
+
+- glEnable
+Sets the settings of active context.
+
+- glFrontFace
+Sets which face is considered as the front face.
+
+- glCullFace
+Sets which face will be culled.
+Default is Back Face.
+
 
 */
 
@@ -271,9 +314,9 @@ void printInitConfig()
 	printf("\n");
 }
 
-void InitializeDotVertexBuffer()
+void InitializeTriangleVertexBuffer()
 {
-	GLVector3f positions[1] = { GLVector3f() };
+	GLVector3f positions[3] = { GLVector3f(1, -1),  GLVector3f(0, 1),  GLVector3f(-1, -1) };
 
 	glGenBuffers(1, &vertexBufferObjectID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjectID);
@@ -291,10 +334,10 @@ void InitializeDotVertexBuffer()
 
 
 // Update
-void DrawDot()
+void DrawTriangle()
 {
 	glBindVertexArray(vertexArrayObjectID);
-	glDrawArrays(GL_POINTS, 0, 1);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);
 }
 
@@ -303,7 +346,7 @@ void OnDisplay()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	Sleep(25);
-	DrawDot();
+	DrawTriangle();
 
 	glutSwapBuffers();
 }
@@ -313,7 +356,7 @@ int main(int argCount, char* args[])
 	int windowIdResult;
 	GLenum glewInitResult;
 
-	windowIdResult = InitializeWindowWithGlut(argCount, args, "1 - First Dot");
+	windowIdResult = InitializeWindowWithGlut(argCount, args, "1 - First Triangle");
 	if (windowIdResult <= 0)
 	{
 		fprintf(stderr, "Error: %s \n", "Unknown");
@@ -328,7 +371,8 @@ int main(int argCount, char* args[])
 	}
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	InitializeDotVertexBuffer();
+	glEnable(GL_CULL_FACE);
+	InitializeTriangleVertexBuffer();
 	printInitConfig();
 
 	glutDisplayFunc(OnDisplay);
