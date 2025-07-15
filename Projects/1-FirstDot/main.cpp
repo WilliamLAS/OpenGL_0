@@ -102,7 +102,10 @@ A primitive with a user-defined number of vertices.
 
 
 -- Shader
-User-defined program in the Rendering Pipeline that runs on GPU.
+There is two meanings. (WHY DOESNT THE PEOPLE TELL THEM TO YOUUUU! OMG)
+Shader: User-defined program in the Rendering Pipeline that runs on GPU. (example: Vertex Shader, Tesellation Shaders, Geometry Shader...)
+Shader Program: Composed of Shaders that you created. (example: COMPOSE OF Vertex Shaders, Tesellation Shaders, Geometry Shaders...)
+That way, we are able to use different SHADER PROGRAM for different PRIMITIVE/VERTEX data.
 
 
 -- Fragment
@@ -136,14 +139,14 @@ Process:
 
 4) Geometry Shader (OPPPPTIONAL)
 Input: Primitive.
-Process: Manipulate input or create new Primitive(s).
+Process: Manipulate input or create new Primitive(s). (example: A point can be the CENTER of a particle system)
 
 5) Transform Feedback
 Input: The 'out' variables you specified in any Shader.
-Process: Update Vertex Buffer Object value that is on your side.
+Process: Updates Vertex Buffer Object value that is on your side.
 
 6) Primitive Assembly (IF NEW VERTEX HAD BEEN CREATED)
-Input: Vertex Datas as your format. (example: GL_TRIANGLE)
+Input: Vertex Datas with specificied format in draw call. (example: GL_TRIANGLE)
 Process: Grouping vertex data to primitives as you told in your program.
 
 7) Clipping, Perspective Divide and Viewport Transform
