@@ -284,7 +284,7 @@ Default is Back Face.
 #include <stdio.h>
 #include <glew.h>
 #include <glut.h>
-#include <simple_math.h>
+#include <tutorial_glmath.h>
 
 GLuint vertexBufferObjectID;
 GLuint vertexArrayObjectID;
@@ -316,7 +316,7 @@ void printInitConfig()
 
 void InitializeTriangleVertexBuffer()
 {
-	GLVector3f positions[3] = { GLVector3f(1, -1),  GLVector3f(0, 1),  GLVector3f(-1, -1) };
+	tutorial::Vector3f positions[3] = { tutorial::Vector3f(1, -1),  tutorial::Vector3f(0, 1),  tutorial::Vector3f(-1, -1) };
 
 	glGenBuffers(1, &vertexBufferObjectID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjectID);
@@ -325,7 +325,7 @@ void InitializeTriangleVertexBuffer()
 
 	glGenVertexArrays(1, &vertexArrayObjectID);
 	glBindVertexArray(vertexArrayObjectID);
-	glBindVertexBuffer(0, vertexBufferObjectID, 0, sizeof(GLVector3f));
+	glBindVertexBuffer(0, vertexBufferObjectID, 0, sizeof(tutorial::Vector3f));
 	glVertexAttribBinding(0, 0);
 	glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, 0);
 	glEnableVertexAttribArray(0);
@@ -356,7 +356,7 @@ int main(int argCount, char* args[])
 	int windowIdResult;
 	GLenum glewInitResult;
 
-	windowIdResult = InitializeWindowWithGlut(argCount, args, "1 - First Triangle");
+	windowIdResult = InitializeWindowWithGlut(argCount, args, "2 - First Triangle");
 	if (windowIdResult <= 0)
 	{
 		fprintf(stderr, "Error: %s \n", "Unknown");

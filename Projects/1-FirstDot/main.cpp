@@ -241,7 +241,7 @@ Example: in a triangle there is 3 vertex data and each of it has different color
 #include <stdio.h>
 #include <glew.h>
 #include <glut.h>
-#include <simple_math.h>
+#include <tutorial_glmath.h>
 
 GLuint vertexBufferObjectID;
 GLuint vertexArrayObjectID;
@@ -273,7 +273,7 @@ void printInitConfig()
 
 void InitializeDotVertexBuffer()
 {
-	GLVector3f positions[1] = { GLVector3f() };
+	tutorial::Vector3f positions[1] = { tutorial::Vector3f() };
 
 	glGenBuffers(1, &vertexBufferObjectID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjectID);
@@ -282,7 +282,7 @@ void InitializeDotVertexBuffer()
 
 	glGenVertexArrays(1, &vertexArrayObjectID);
 	glBindVertexArray(vertexArrayObjectID);
-	glBindVertexBuffer(0, vertexBufferObjectID, 0, sizeof(GLVector3f));
+	glBindVertexBuffer(0, vertexBufferObjectID, 0, sizeof(tutorial::Vector3f));
 	glVertexAttribBinding(0, 0);
 	glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, 0);
 	glEnableVertexAttribArray(0);

@@ -127,7 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Shared\Include\tutorial_glmath.cpp" />
+    <ClCompile Include="..\..\Shared\Include\tutorial_glutils.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Shared\Include\tutorial_glmath.h" />
+    <ClInclude Include="..\..\Shared\Include\tutorial_glutils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
