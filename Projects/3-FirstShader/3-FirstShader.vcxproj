@@ -136,6 +136,7 @@
     <ClInclude Include="..\..\Shared\Include\tutorial_glutils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="triangle.frag" />
     <None Include="triangle.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

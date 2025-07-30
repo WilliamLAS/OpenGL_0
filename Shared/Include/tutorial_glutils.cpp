@@ -40,10 +40,9 @@ namespace tutorial
         return shaderId;
     }
 
-    GLuint CreateCompiledShaderProgram(const size_t shadersLength, const GLuint* shaders, GLint* isShaderProgramCompiled, GLint* isShaderProgramValid)
+    GLuint CreateCompiledShaderProgram(const size_t shadersLength, const GLuint* shaders, GLint* isShaderProgramCompiled)
     {
         *isShaderProgramCompiled = 0;
-        *isShaderProgramValid = 0;
         GLuint shaderProgramId = glCreateProgram();
         if (shaderProgramId == 0)
             return 0;
@@ -53,9 +52,6 @@ namespace tutorial
 
         glLinkProgram(shaderProgramId);
         glGetProgramiv(shaderProgramId, GL_LINK_STATUS, isShaderProgramCompiled);
-        
-        glValidateProgram(shaderProgramId);
-        glGetProgramiv(shaderProgramId, GL_VALIDATE_STATUS, isShaderProgramValid);
         
         for (size_t i = 0; i < shadersLength; i++)
             glDetachShader(shaderProgramId, shaders[i]);

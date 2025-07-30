@@ -5,9 +5,9 @@
 #include <tutorial_glmath.h>
 #include <tutorial_glutils.h>
 
-#define coutWorkStart(information) std::cout << __FUNCTION__ << " started: " << information << "\n";
-#define coutWorkSuccess(information) std::cout << __FUNCTION__ << " succeded: " << information << "\n";
-#define cerrWorkFail(reason) std::cerr << __FUNCTION__ << " failed: " <<  reason << "\n";
+#define coutWorkStart() std::cout << __FUNCTION__ << " started. \n";
+#define coutWorkSuccess() std::cout << __FUNCTION__ << " succeded. \n\n";
+#define cerrWorkFail() std::cerr << __FUNCTION__ << " failed. \n\n";
 
 GLuint triangleVertexBufferObjectId = 0;
 GLuint triangleVertexArrayObjectId = 0;
@@ -17,7 +17,8 @@ GLuint triangleShaderProgramId = 0;
 // Initialize
 GLboolean InitializeGLWindow(int* argCount, char* args[], const char* title)
 {
-	coutWorkStart("Creating window using FreeGlut.");
+	coutWorkStart();
+	std::cout << "Using FreeGlut API: " << GLUT_API_VERSION << "\n";
 	
 	glutInit(argCount, args);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
@@ -27,42 +28,47 @@ GLboolean InitializeGLWindow(int* argCount, char* args[], const char* title)
 	int windowId = glutCreateWindow(title);
 	if (windowId <= 0)
 	{
-		cerrWorkFail("Unknown.");
+		std::cout << "Unknown error occured. \n";
+		cerrWorkFail();
 		return GL_FALSE;
 	}
 	
-	coutWorkSuccess("Active window identifier: " + std::to_string(glutGetWindow()));
+	std::cout << "Active window identifier: " << glutGetWindow() << "\n";
+	coutWorkSuccess();
 	return GL_TRUE;
 }
 
 GLboolean InitializeGLFunctions()
 {
-	coutWorkStart("Loading GL functions using Glew.");
-	GLenum glewResult = glewInit();
+	coutWorkStart();
+	std::cout << "Using GLEW: " << glewGetString(GLEW_VERSION) << "\n";
 
+	GLenum glewResult = glewInit();
 	if (glewResult != GLEW_OK)
 	{
-		cerrWorkFail(glewGetErrorString(glewResult));
+		std::cout << glewGetErrorString(glewResult) << "\n";
+		cerrWorkFail();
 		return GL_FALSE;
 	}
 	
-	coutWorkSuccess("");
+	std::cout << "Using OpenGL:" << glGetString(GL_VERSION) << "\n";
+	coutWorkSuccess();
 	return GL_TRUE;
 }
 
 GLboolean InitializeGLSettings()
 {
-	coutWorkStart("Setting initial values.");
+	coutWorkStart();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_CULL_FACE);
 
-	coutWorkSuccess("");
+	coutWorkSuccess();
 	return GL_TRUE;
 }
 
 GLboolean InitializeTriangleVertexData()
 {
-	coutWorkStart("");
+	coutWorkStart();
 	tutorial::Vector3f positions[3] = { tutorial::Vector3f(1, -1),  tutorial::Vector3f(0, 1),  tutorial::Vector3f(-1, -1) };
 
 	glGenBuffers(1, &triangleVertexBufferObjectId);
@@ -78,26 +84,30 @@ GLboolean InitializeTriangleVertexData()
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 
-	coutWorkSuccess("");
+	coutWorkSuccess();
 	return GL_TRUE;
 }
 
 GLboolean InitializeShader(GLuint* shaderId, GLenum shaderType, const std::string shaderFilePath)
 {
-	coutWorkStart("Compiling type of (" + std::to_string(shaderType) + ") for file (" + shaderFilePath + ").");
+	coutWorkStart();
+	std::cout << "Compiling type of (" << shaderType << ") for file (" << shaderFilePath << "). \n";
+	
 	GLint isShaderCompiled = 0;
 	const std::string shaderSource = tutorial::ReadFile(shaderFilePath);
 
 	if (shaderSource.empty())
 	{
-		cerrWorkFail("Source is empty.");
+		std::cout << "Source is empty. \n";
+		cerrWorkFail();
 		return GL_FALSE;
 	}
 
-	*shaderId = tutorial::CreateCompiledShader(GL_VERTEX_SHADER, shaderSource, &isShaderCompiled);
+	*shaderId = tutorial::CreateCompiledShader(shaderType, shaderSource, &isShaderCompiled);
 	if (*shaderId == 0)
 	{
-		cerrWorkFail("Creation failed.");
+		std::cout << "Creation failed. \n";
+		cerrWorkFail();
 		return GL_FALSE;
 	}
 
@@ -106,44 +116,56 @@ GLboolean InitializeShader(GLuint* shaderId, GLenum shaderType, const std::strin
 		GLchar temporaryInfoLog[1024];
 		glGetShaderInfoLog(*shaderId, 1024, NULL, temporaryInfoLog);
 
-		cerrWorkFail("Compilation failed.\n" + std::string(temporaryInfoLog));
+		std::cout << "Compilation failed: \n" << temporaryInfoLog << "\n";
+		cerrWorkFail();
 		return GL_FALSE;
 	}
 	
-	coutWorkSuccess("");
+	coutWorkSuccess();
 	return GL_TRUE;
 }
 
 GLboolean InitializeShaderProgram(GLuint* shaderProgramId, const size_t shadersLength, const GLuint* shaders, const std::string arbitraryProgramName)
 {
-	coutWorkStart("Linking (" + arbitraryProgramName + ").");
+	coutWorkStart();
+	std::cout << "Creating: " << arbitraryProgramName << "\n";
+
 	GLboolean isShaderCompiled = GL_FALSE;
 	GLint isShaderProgramCompiled = 0;
-	GLint isShaderProgramValid = 0;
 
-	*shaderProgramId = tutorial::CreateCompiledShaderProgram(shadersLength, shaders, &isShaderProgramCompiled, &isShaderProgramValid);
+	*shaderProgramId = tutorial::CreateCompiledShaderProgram(shadersLength, shaders, &isShaderProgramCompiled);
 	if (*shaderProgramId == 0)
 	{
-		cerrWorkFail("Creation failed.");
+		std::cout << "Creation failed.";
+		cerrWorkFail();
 		return GL_FALSE;
 	}
+
+	if (isShaderProgramCompiled == 0)
+	{
+		GLchar temporaryInfoLog[1024];
+		glGetProgramInfoLog(*shaderProgramId, 1024, NULL, temporaryInfoLog);
+
+		std::cout << "Compilation failed because: \n" << temporaryInfoLog << "\n";
+		cerrWorkFail();
+		return GL_FALSE;
+	}
+
+	GLint isShaderProgramValid = 0;
+	glValidateProgram(*shaderProgramId);
+	glGetProgramiv(*shaderProgramId, GL_VALIDATE_STATUS, &isShaderProgramValid);
 
 	if (isShaderProgramValid == 0)
 	{
 		GLchar temporaryInfoLog[1024];
-		std::string failReason;
 		glGetProgramInfoLog(*shaderProgramId, 1024, NULL, temporaryInfoLog);
 
-		if (isShaderProgramCompiled == 0)
-			failReason = "Compilation failed.";
-		else
-			failReason = "Validation failed.";
-
-		cerrWorkFail(failReason + "\n" + std::string(temporaryInfoLog));
+		std::cout << "Validation failed because: \n" << temporaryInfoLog << "\n";
+		cerrWorkFail();
 		return GL_FALSE;
 	}
 
-	coutWorkSuccess("");
+	coutWorkSuccess();
 	return GL_TRUE;
 }
 
@@ -194,9 +216,6 @@ int main(int argCount, char* args[])
 	InitializeGLSettings();
 	InitializeTriangleVertexData();
 	glutDisplayFunc(OnDisplay);
-
-	printf("Using GLEW %s \n", glewGetString(GLEW_VERSION));
-	printf("Using OpenGL %s \n", glGetString(GL_VERSION));
 
 	glutMainLoop();
 	return 0;

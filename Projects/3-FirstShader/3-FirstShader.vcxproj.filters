@@ -37,5 +37,8 @@
     <None Include="triangle.vert">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="triangle.frag">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
