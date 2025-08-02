@@ -192,7 +192,7 @@ void OnDisplay()
 
 int main(int argCount, char* args[])
 {
-	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "3 - First Shader");
+	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "3 - First Triangle Shader");
 	if (windowInitResult == GL_FALSE)
 		return -1;
 

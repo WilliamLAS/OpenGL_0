@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{D4BCEFBA-7FAE-4AD1-82B3-F5D09D002BE0}</ProjectGuid>
+    <ProjectGuid>{35092537-2E7A-4642-9621-69CA43F31B4D}</ProjectGuid>
     <RootNamespace>My1FirstDot</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>3-FirstTriangleShader</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -134,6 +135,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\Shared\Include\tutorial_glmath.h" />
     <ClInclude Include="..\..\Shared\Include\tutorial_glutils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="triangle.frag" />
+    <None Include="triangle.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
