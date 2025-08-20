@@ -101,7 +101,7 @@ GLuint triangleVertexArrayObjectId = 0;
 struct
 {
 	GLuint id = 0;
-	GLint translationLocation = -1;
+	GLint rotationLocation = -1;
 
 	GLboolean Initialize()
 	{
@@ -129,10 +129,10 @@ struct
 			return GL_FALSE;
 		}
 
-		translationLocation = glGetUniformLocation(id, "translation");
-		if (translationLocation < 0)
+		rotationLocation = glGetUniformLocation(id, "rotation");
+		if (rotationLocation < 0)
 		{
-			std::cout << "Cant find translationLocation. \n";
+			std::cout << "Cant find rotationLocation. \n";
 			cerrWorkFail();
 			return GL_FALSE;
 		}
@@ -226,30 +226,25 @@ GLboolean InitializeTriangleVertexData()
 // Update
 void DrawTriangle()
 {
-	static GLfloat scale = 0.0f;
-	static GLfloat speed = 0.05f;
+	static GLfloat angleInDegree = 0.0f;
+	static GLfloat speed = 3.0f;
 
-	scale += speed;
-	if (scale > 1.0f)
+	angleInDegree += speed;
+	if (angleInDegree > 360.0f)
 	{
-		scale = 1.0f;
+		angleInDegree = 360.0f;
 		speed *= -1.0f;
 	}
-	else if (scale < -1.0f)
+	else if (angleInDegree < -360.0f)
 	{
-		scale = -1.0f;
+		angleInDegree = -360.0f;
 		speed *= -1.0f;
 	}
 
-	tutorial::mat4x4 translation = tutorial::mat4x4(
-		1.0f, 0.0f, 0.0f, scale,
-		0.0f, 1.0f, 0.0f, scale,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+	tutorial::mat4x4 rotation = tutorial::quat(tutorial::vec3(0.0f, 0.0f, 1.0f), angleInDegree).Getmat4x4();
 
 	glUseProgram(triangleTransformationShaderProgram.id);
-	glUniformMatrix4fv(triangleTransformationShaderProgram.translationLocation, 1, GL_TRUE, &translation.data[0][0]);
+	glUniformMatrix4fv(triangleTransformationShaderProgram.rotationLocation, 1, GL_TRUE, &rotation.data[0][0]);
 	glBindVertexArray(triangleVertexArrayObjectId);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);
@@ -269,7 +264,7 @@ void OnDisplay()
 
 int main(int argCount, char* args[])
 {
-	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "5 - Triangle Translation");
+	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "6 - Triangle Rotation");
 	if (windowInitResult == GL_FALSE)
 		return -1;
 

@@ -8,6 +8,11 @@
 
 namespace tutorial
 {
+	extern GLfloat const pi;
+	extern GLfloat const degreeToRadian;
+	extern GLfloat const epsilon;
+
+
 	struct vec3
 	{
 		GLfloat x;
@@ -16,7 +21,14 @@ namespace tutorial
 
 		vec3();
 		vec3(GLfloat _x, GLfloat _y, GLfloat _z);
+
+		GLfloat GetSquaredMagnitude() const;
+		GLfloat GetMagnitude() const;
+		vec3 GetNormalized() const;
+		GLboolean IsNormalized() const;
+		vec3 operator *(GLfloat const & right) const;
 	};
+
 
 	struct mat4x4
 	{
@@ -29,6 +41,20 @@ namespace tutorial
 			GLfloat row21, GLfloat row22, GLfloat row23, GLfloat row24,
 			GLfloat row31, GLfloat row32, GLfloat row33, GLfloat row34
 		);
+	};
+
+
+	struct quat
+	{
+		GLfloat x;
+		GLfloat y;
+		GLfloat z;
+		GLfloat w;
+
+		quat();
+		quat(vec3 direction, GLfloat angleInDegree);
+
+		mat4x4 Getmat4x4() const;
 	};
 }
 

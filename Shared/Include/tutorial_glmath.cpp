@@ -1,16 +1,51 @@
 #include <glew.h>
 #include "tutorial_glmath.h"
+#include <cmath>
 
 
 namespace tutorial
 {
+	GLfloat const pi = acosf(-1.0f);
+	GLfloat const degreeToRadian = pi / 180.0f;
+	GLfloat const epsilon = 1.1920929e-07F;
+
+
 	vec3::vec3()
-		: x(0), y(0), z(0)
+		: x(0.0f), y(0.0f), z(0.0f)
 	{ }
 
 	vec3::vec3(GLfloat _x, GLfloat _y, GLfloat _z)
 		: x(_x), y(_y), z(_z)
 	{ }
+
+	GLfloat vec3::GetSquaredMagnitude() const
+	{
+		return (x * x) + (y * y) + (z * z);
+	}
+
+	GLfloat vec3::GetMagnitude() const
+	{
+		return std::sqrtf(GetSquaredMagnitude());
+	}
+
+	vec3 vec3::GetNormalized() const
+	{
+		float magnitude = GetMagnitude();
+		if (magnitude > 0.0f)
+			return vec3(x / magnitude, y / magnitude, z / magnitude);
+		else
+			return vec3(0.0f, 0.0f, 0.0f);
+	}
+
+	GLboolean vec3::IsNormalized() const
+	{
+		return std::fabsf(GetSquaredMagnitude() - 1.0f) < epsilon;
+	}
+
+	vec3 vec3::operator *(GLfloat const & right) const
+	{
+		return vec3(x * right, y * right, z * right);
+	}
 
 
 	mat4x4::mat4x4()
@@ -31,5 +66,50 @@ namespace tutorial
 		data[1][0] = row10; data[1][1] = row11; data[1][2] = row12; data[1][3] = row13;
 		data[2][0] = row20; data[2][1] = row21; data[2][2] = row22; data[2][3] = row23;
 		data[3][0] = row30; data[3][1] = row31; data[3][2] = row32; data[3][3] = row33;
+	}
+
+
+	quat::quat()
+		: quat(vec3(0.0f, 0.0f, 0.0f), 1.0f)
+	{ }
+
+	quat::quat(vec3 direction, GLfloat angleInDegree)
+	{
+		if (direction.GetSquaredMagnitude() == 0.0f)
+		{
+			x = 0.0f;
+			y = 0.0f;
+			z = 0.0f;
+			w = 1.0f; // Because cos(angle/2) = cos(0) = 1
+			return;
+		}
+
+		direction = direction.GetNormalized();
+		float halfAngleInRadian = (angleInDegree * degreeToRadian) * 0.5f;
+
+		x = direction.x * std::sinf(halfAngleInRadian);
+		y = direction.y * std::sinf(halfAngleInRadian);
+		z = direction.z * std::sinf(halfAngleInRadian);
+		w = std::cosf(halfAngleInRadian);
+	}
+
+	mat4x4 quat::Getmat4x4() const
+	{
+		float xx = x * x;
+		float yy = y * y;
+		float zz = z * z;
+		float xy = x * y;
+		float xz = x * z;
+		float yz = y * z;
+		float wx = w * x;
+		float wy = w * y;
+		float wz = w * z;
+
+		return mat4x4(
+			1.0f - 2.0f * (yy + zz),	2.0f * (xy - wz),			2.0f * (xz + wy),			0.0f,
+			2.0f * (xy + wz),			1.0f - 2.0f * (xx + zz),	2.0f * (yz - wx),			0.0f,
+			2.0f * (xz - wy),			2.0f * (yz + wx),			1.0f - 2.0f * (xx + yy),	0.0f,
+			0.0f,						0.0f,						0.0f,						1.0f
+		);
 	}
 }
