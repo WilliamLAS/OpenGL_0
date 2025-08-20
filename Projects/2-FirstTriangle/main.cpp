@@ -316,7 +316,7 @@ void printInitConfig()
 
 void InitializeTriangleVertexBuffer()
 {
-	tutorial::Vector3f positions[3] = { tutorial::Vector3f(1, -1),  tutorial::Vector3f(0, 1),  tutorial::Vector3f(-1, -1) };
+	tutorial::vec3 positions[3] = { tutorial::vec3(1, -1, 0),  tutorial::vec3(0, 1, 0),  tutorial::vec3(-1, -1, 0) };
 
 	glGenBuffers(1, &vertexBufferObjectID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjectID);
@@ -325,7 +325,7 @@ void InitializeTriangleVertexBuffer()
 
 	glGenVertexArrays(1, &vertexArrayObjectID);
 	glBindVertexArray(vertexArrayObjectID);
-	glBindVertexBuffer(0, vertexBufferObjectID, 0, sizeof(tutorial::Vector3f));
+	glBindVertexBuffer(0, vertexBufferObjectID, 0, sizeof(tutorial::vec3));
 	glVertexAttribBinding(0, 0);
 	glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, 0);
 	glEnableVertexAttribArray(0);
