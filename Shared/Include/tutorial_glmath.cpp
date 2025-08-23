@@ -1,4 +1,5 @@
 #include <glew.h>
+#include <array>
 #include "tutorial_glmath.h"
 #include <cmath>
 
@@ -6,7 +7,6 @@
 namespace tutorial
 {
 	GLfloat const pi = acosf(-1.0f);
-	GLfloat const degreeToRadian = pi / 180.0f;
 	GLfloat const epsilon = 1.1920929e-07F;
 
 
@@ -68,6 +68,21 @@ namespace tutorial
 		data[3][0] = row30; data[3][1] = row31; data[3][2] = row32; data[3][3] = row33;
 	}
 
+	mat4x4 mat4x4::operator *(mat4x4 const& right) const
+	{
+		mat4x4 result;
+		for (size_t row = 0; row < 4; row++) {
+			for (size_t column = 0; column < 4; column++) {
+				result.data[row][column] =
+					data[row][0] * right.data[0][column] +
+					data[row][1] * right.data[1][column] +
+					data[row][2] * right.data[2][column] +
+					data[row][3] * right.data[3][column];
+			}
+		}
+		return result;
+	}
+
 
 	quat::quat()
 		: quat(vec3(0.0f, 0.0f, 0.0f), 1.0f)
@@ -85,7 +100,7 @@ namespace tutorial
 		}
 
 		direction = direction.GetNormalized();
-		float halfAngleInRadian = (angleInDegree * degreeToRadian) * 0.5f;
+		float halfAngleInRadian = GetRadianFromDegree(angleInDegree) * 0.5f;
 
 		x = direction.x * std::sinf(halfAngleInRadian);
 		y = direction.y * std::sinf(halfAngleInRadian);
@@ -111,5 +126,11 @@ namespace tutorial
 			2.0f * (xz - wy),			2.0f * (yz + wx),			1.0f - 2.0f * (xx + yy),	0.0f,
 			0.0f,						0.0f,						0.0f,						1.0f
 		);
+	}
+
+
+	GLfloat GetRadianFromDegree(GLfloat degree)
+	{
+		return degree * (pi / 180.0f);
 	}
 }

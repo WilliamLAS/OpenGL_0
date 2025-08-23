@@ -9,7 +9,6 @@
 namespace tutorial
 {
 	extern GLfloat const pi;
-	extern GLfloat const degreeToRadian;
 	extern GLfloat const epsilon;
 
 
@@ -26,10 +25,11 @@ namespace tutorial
 		GLfloat GetMagnitude() const;
 		vec3 GetNormalized() const;
 		GLboolean IsNormalized() const;
-		vec3 operator *(GLfloat const & right) const;
+		vec3 operator *(GLfloat const& right) const;
 	};
 
 
+	// Row-major
 	struct mat4x4
 	{
 		GLfloat data[4][4];
@@ -41,6 +41,8 @@ namespace tutorial
 			GLfloat row21, GLfloat row22, GLfloat row23, GLfloat row24,
 			GLfloat row31, GLfloat row32, GLfloat row33, GLfloat row34
 		);
+
+		mat4x4 operator *(mat4x4 const& right) const;
 	};
 
 
@@ -56,6 +58,9 @@ namespace tutorial
 
 		mat4x4 Getmat4x4() const;
 	};
+
+
+	GLfloat GetRadianFromDegree(GLfloat degree);
 }
 
 

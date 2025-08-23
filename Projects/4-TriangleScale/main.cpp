@@ -101,7 +101,7 @@ GLuint triangleVertexArrayObjectId = 0;
 struct
 {
 	GLuint id = 0;
-	GLint translationLocation = -1;
+	GLint scaleLocation = -1;
 
 	GLboolean Initialize()
 	{
@@ -129,10 +129,10 @@ struct
 			return GL_FALSE;
 		}
 
-		translationLocation = glGetUniformLocation(id, "translation");
-		if (translationLocation < 0)
+		scaleLocation = glGetUniformLocation(id, "scale");
+		if (scaleLocation < 0)
 		{
-			std::cout << "Cant find translationLocation. \n";
+			std::cout << "Cant find scaleLocation. \n";
 			cerrWorkFail();
 			return GL_FALSE;
 		}
@@ -202,7 +202,7 @@ GLboolean InitializeGLSettings()
 GLboolean InitializeTriangleVertexData()
 {
 	coutWorkStart();
-	tutorial::vec3 positions[3] = { tutorial::vec3(1.0f, -1.0f, 0.0f),  tutorial::vec3(0.0f, 1.0f, 0.0f),  tutorial::vec3(-1, -1, 0) };
+	tutorial::vec3 positions[3] = { tutorial::vec3(1, -1, 0),  tutorial::vec3(0, 1, 0),  tutorial::vec3(-1, -1, 0) };
 
 	glGenBuffers(1, &triangleVertexBufferObjectId);
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVertexBufferObjectId);
@@ -226,30 +226,30 @@ GLboolean InitializeTriangleVertexData()
 // Update
 void DrawTriangle()
 {
-	static GLfloat amount = 0.0f;
-	static GLfloat speed = 0.05f;
+	static float amount = 0.0f;
+	static float speed = 0.05f;
 
 	amount += speed;
-	if (amount > 1.0f)
+	if (amount > 1.5f)
 	{
-		amount = 1.0f;
+		amount = 1.5f;
 		speed *= -1.0f;
 	}
-	else if (amount < -1.0f)
+	else if (amount < 0.5f)
 	{
-		amount = -1.0f;
+		amount = 0.5f;
 		speed *= -1.0f;
 	}
 
-	tutorial::mat4x4 translation = tutorial::mat4x4(
-		1.0f, 0.0f, 0.0f, amount,
-		0.0f, 1.0f, 0.0f, amount,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
+	tutorial::mat4x4 scale = tutorial::mat4x4(
+		amount,	0.0f,	0.0f,	0.0f,
+		0.0f, amount,	0.0f,	0.0f,
+		0.0f,	0.0f, amount,	0.0f,
+		0.0f,	0.0f,	0.0f,	1.0f
 	);
 
 	glUseProgram(triangleTransformationShaderProgram.id);
-	glUniformMatrix4fv(triangleTransformationShaderProgram.translationLocation, 1, GL_TRUE, &translation.data[0][0]);
+	glUniformMatrix4fv(triangleTransformationShaderProgram.scaleLocation, 1, GL_TRUE, &scale.data[0][0]);
 	glBindVertexArray(triangleVertexArrayObjectId);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);
@@ -269,7 +269,7 @@ void OnDisplay()
 
 int main(int argCount, char* args[])
 {
-	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "5 - Triangle Translation");
+	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "4 - Triangle Scale");
 	if (windowInitResult == GL_FALSE)
 		return -1;
 
