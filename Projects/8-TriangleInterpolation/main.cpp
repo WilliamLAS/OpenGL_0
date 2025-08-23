@@ -226,38 +226,20 @@ GLboolean InitializeTriangleVertexData()
 // Update
 void DrawTriangle()
 {
-	static GLfloat angleInDegree = 0.0f;
-	static GLfloat speed = 3.0f;
-
-	angleInDegree += speed;
-	if (angleInDegree > 360.0f)
-	{
-		angleInDegree = 360.0f;
-		speed *= -1.0f;
-	}
-	else if (angleInDegree < -360.0f)
-	{
-		angleInDegree = -360.0f;
-		speed *= -1.0f;
-	}
-
 	tutorial::mat4x4 scale = tutorial::mat4x4(
-		0.25f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.25f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.25f, 0.0f,
+		0.75f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.75f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.75f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
-	tutorial::mat4x4 quaternion = tutorial::quat(tutorial::vec3(0.0f, 0.0f, 1.0f), angleInDegree).Getmat4x4();
 	tutorial::mat4x4 translate = tutorial::mat4x4(
-		1.0f, 0.0f, 0.0f, 0.5f,
+		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 	
-	// Order matters.
-	// tutorial::mat4x4 model = translate * quaternion * scale;
-	tutorial::mat4x4 model = quaternion * translate * scale;
+	tutorial::mat4x4 model = translate * scale;
 
 	glUseProgram(triangleTransformationShaderProgram.id);
 	glUniformMatrix4fv(triangleTransformationShaderProgram.modelLocation, 1, GL_TRUE, &model.data[0][0]);
@@ -280,7 +262,7 @@ void OnDisplay()
 
 int main(int argCount, char* args[])
 {
-	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "7 - Triangle Model");
+	GLboolean windowInitResult = InitializeGLWindow(&argCount, args, "8 - Triangle Interpolation");
 	if (windowInitResult == GL_FALSE)
 		return -1;
 
