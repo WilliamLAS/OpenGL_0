@@ -103,7 +103,7 @@ GLboolean InitializeShader(GLuint* shaderId, GLenum shaderType, const std::strin
 		return GL_FALSE;
 	}
 
-	*shaderId = tutorial::CreateCompiledShader(shaderType, shaderSource, &isShaderCompiled);
+	*shaderId = tutorial::CreateCompiledShaderObject(shaderType, shaderSource, &isShaderCompiled);
 	if (*shaderId == 0)
 	{
 		std::cout << "Creation failed. \n";
@@ -133,7 +133,7 @@ GLboolean InitializeShaderProgram(GLuint* shaderProgramId, const size_t shadersL
 	GLboolean isShaderCompiled = GL_FALSE;
 	GLint isShaderProgramCompiled = 0;
 
-	*shaderProgramId = tutorial::CreateCompiledShaderProgram(shadersLength, shaders, &isShaderProgramCompiled);
+	*shaderProgramId = tutorial::CreateCompiledShaderProgramObject(shadersLength, shaders, &isShaderProgramCompiled);
 	if (*shaderProgramId == 0)
 	{
 		std::cout << "Creation failed.";

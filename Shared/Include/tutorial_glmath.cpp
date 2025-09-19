@@ -1,5 +1,4 @@
 #include <glew.h>
-#include <array>
 #include "tutorial_glmath.h"
 #include <cmath>
 

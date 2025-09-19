@@ -29,7 +29,7 @@ GLboolean InitializeShader(GLuint* shaderId, GLenum shaderType, const std::strin
 	}
 
 	GLint isShaderCompiled = 0;
-	*shaderId = tutorial::CreateCompiledShader(shaderType, shaderSource, &isShaderCompiled);
+	*shaderId = tutorial::CreateCompiledShaderObject(shaderType, shaderSource, &isShaderCompiled);
 	if (*shaderId == 0)
 	{
 		std::cout << "Creation failed. \n";
@@ -57,7 +57,7 @@ GLboolean InitializeShaderProgram(GLuint* shaderProgramId, const size_t shadersL
 	std::cout << "Creating: " << arbitraryProgramName << "\n";
 
 	GLint isShaderProgramCompiled = 0;
-	*shaderProgramId = tutorial::CreateCompiledShaderProgram(shadersLength, shaders, &isShaderProgramCompiled);
+	*shaderProgramId = tutorial::CreateCompiledShaderProgramObject(shadersLength, shaders, &isShaderProgramCompiled);
 	if (*shaderProgramId == 0)
 	{
 		std::cout << "Creation failed.";
@@ -122,7 +122,7 @@ struct
 			return GL_FALSE;
 		}
 
-		GLboolean shaderProgramLinkingResult = InitializeShaderProgram(&id, 2, shaders, "Triangle Transformation Shader Program");
+		GLboolean shaderProgramLinkingResult = InitializeShaderProgram(&id, 2, shaders, "Triangle Shader Program");
 		if (shaderProgramLinkingResult == GL_FALSE)
 		{
 			cerrWorkFail();

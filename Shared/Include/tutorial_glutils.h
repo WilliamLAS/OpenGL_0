@@ -15,9 +15,9 @@ namespace tutorial
 	const std::string ReadFile(const std::string pathToFile);
 
 
-	GLuint CreateCompiledShader(const GLenum shaderType, const std::string shaderSource, GLint* isShaderCompiled);
+	GLuint CreateCompiledShaderObject(const GLenum shaderType, const std::string shaderSource, GLint* isShaderCompiled);
 
-	GLuint CreateCompiledShaderProgram(const size_t shadersLength, const GLuint* shaders, GLint* isShaderProgramCompiled);
+	GLuint CreateCompiledShaderProgramObject(const size_t shadersCount, const GLuint* shaders, GLint* isShaderProgramCompiled);
 }
 
 

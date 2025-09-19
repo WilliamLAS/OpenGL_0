@@ -24,39 +24,39 @@ namespace tutorial
     }
 
 
-    GLuint CreateCompiledShader(const GLenum shaderType, const std::string shaderSource, GLint* isShaderCompiled)
+    GLuint CreateCompiledShaderObject(const GLenum shaderType, const std::string shaderSource, GLint* isShaderCompiled)
     {
         *isShaderCompiled = 0;
-        GLuint shaderId = glCreateShader(shaderType);
-        if (shaderId == 0)
+        GLuint shaderObjectId = glCreateShader(shaderType);
+        if (shaderObjectId == 0)
             return 0;
 
-        const GLchar* shaderSourceChar = shaderSource.c_str();
-        const GLint shaderSourceLength = shaderSource.length();
-        glShaderSource(shaderId, 1, &shaderSourceChar, &shaderSourceLength);
+        const GLchar* source = shaderSource.c_str();
+        const GLint sourceLength = shaderSource.length();
+        glShaderSource(shaderObjectId, 1, &source, &sourceLength);
 
-        glCompileShader(shaderId);
-        glGetShaderiv(shaderId, GL_COMPILE_STATUS, isShaderCompiled);
-        return shaderId;
+        glCompileShader(shaderObjectId);
+        glGetShaderiv(shaderObjectId, GL_COMPILE_STATUS, isShaderCompiled);
+        return shaderObjectId;
     }
 
-    GLuint CreateCompiledShaderProgram(const size_t shadersLength, const GLuint* shaders, GLint* isShaderProgramCompiled)
+    GLuint CreateCompiledShaderProgramObject(const size_t shadersCount, const GLuint* shaders, GLint* isShaderProgramCompiled)
     {
         *isShaderProgramCompiled = 0;
-        GLuint shaderProgramId = glCreateProgram();
-        if (shaderProgramId == 0)
+        GLuint shaderProgramObjectId = glCreateProgram();
+        if (shaderProgramObjectId == 0)
             return 0;
 
-        for (size_t i = 0; i < shadersLength; i++)
-            glAttachShader(shaderProgramId, shaders[i]);
+        for (size_t i = 0; i < shadersCount; i++)
+            glAttachShader(shaderProgramObjectId, shaders[i]);
 
-        glLinkProgram(shaderProgramId);
-        glGetProgramiv(shaderProgramId, GL_LINK_STATUS, isShaderProgramCompiled);
-        
-        for (size_t i = 0; i < shadersLength; i++)
-            glDetachShader(shaderProgramId, shaders[i]);
+        glLinkProgram(shaderProgramObjectId);
+        glGetProgramiv(shaderProgramObjectId, GL_LINK_STATUS, isShaderProgramCompiled);
 
-        return shaderProgramId;
+        for (size_t i = 0; i < shadersCount; i++)
+            glDetachShader(shaderProgramObjectId, shaders[i]);
+
+        return shaderProgramObjectId;
     }
 
 }

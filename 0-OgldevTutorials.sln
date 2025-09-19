@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "7-TriangleModel", "Projects
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8-TriangleInterpolation", "Projects\8-TriangleInterpolation\8.vcxproj", "{47A8A8AB-A85F-4CBF-AEA4-4B684671269D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "9-TriangleIndexedDraw", "Projects\9-TriangleIndexedDraw\9.vcxproj", "{0FD64546-015D-42D9-9B8E-E1E727540ECF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -101,6 +103,14 @@ Global
 		{47A8A8AB-A85F-4CBF-AEA4-4B684671269D}.Release|x64.Build.0 = Release|x64
 		{47A8A8AB-A85F-4CBF-AEA4-4B684671269D}.Release|x86.ActiveCfg = Release|Win32
 		{47A8A8AB-A85F-4CBF-AEA4-4B684671269D}.Release|x86.Build.0 = Release|Win32
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Debug|x64.ActiveCfg = Debug|x64
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Debug|x64.Build.0 = Debug|x64
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Debug|x86.ActiveCfg = Debug|Win32
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Debug|x86.Build.0 = Debug|Win32
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Release|x64.ActiveCfg = Release|x64
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Release|x64.Build.0 = Release|x64
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Release|x86.ActiveCfg = Release|Win32
+		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
