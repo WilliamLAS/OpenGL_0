@@ -100,6 +100,13 @@ GLboolean InitializeShaderProgramObject(GLuint* shaderProgramObjectId, const siz
 
 
 // Variables
+int windowWidth = 400;
+int windowHeight = 300;
+float projectionFOVYInDegree = 90.0f;
+float projectionNearZ = 1.0f;
+float projectionFarZ = 10.0f;
+
+tutorial::mat4x4 projection = tutorial::mat4x4().ToIdentity();
 std::mt19937 randomGeneratorEngine = std::mt19937(12345);
 
 struct
@@ -121,11 +128,9 @@ struct
 	GLuint VBOId = 0; // Vertex Buffer Object
 	GLuint VEOId = 0; // Vertex Array Object
 	GLuint VAOId = 0; // Vertex Element Object
-	
 	GLuint shaderProgramObjectId = 0;
+	
 	GLint MVPLocation = -1;
-
-	tutorial::mat4x4 projection = tutorial::GetPerspectiveProjectionMatrix(90.0f, 1.0f, 1.0f, 10.0f);
 
 	tutorial::mat4x4 scale = tutorial::mat4x4().ToIdentity();
 	tutorial::mat4x4 rotation = tutorial::quat().GetMatrix();
@@ -318,7 +323,7 @@ GLboolean InitializeGLWindow(int* argCount, char* args[], const char* title)
 	
 	glutInit(argCount, args);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowSize(320, 320);
+	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitWindowPosition(0, 0);
 
 	int windowId = glutCreateWindow(title);
@@ -399,12 +404,21 @@ void OnDisplay()
 	glutSwapBuffers();
 }
 
+void OnWindowSizeChanged(int width, int height)
+{
+	windowWidth = width;
+	windowHeight = height;
+
+	glViewport(0, 0, windowWidth, windowHeight);
+	projection = tutorial::GetPerspectiveProjectionMatrix(projectionFOVYInDegree, (GLfloat)windowWidth / (GLfloat)windowHeight, projectionNearZ, projectionFarZ);
+}
+
 int main(int argCount, char* args[])
 {
 	std::random_device randomSeedGenerator = std::random_device();
 	randomGeneratorEngine = std::mt19937(randomSeedGenerator());
 
-	GLboolean initializationResult = InitializeGLWindow(&argCount, args, "10 - Cube Projection");
+	GLboolean initializationResult = InitializeGLWindow(&argCount, args, "11 - Cube Projection Enhanced");
 	if (initializationResult == GL_FALSE)
 		return -1;
 
@@ -421,6 +435,7 @@ int main(int argCount, char* args[])
 		return -1;
 	
 	glutDisplayFunc(OnDisplay);
+	glutReshapeFunc(OnWindowSizeChanged);
 
 	std::cout << "FreeGlut is controlling the system now. \n";
 	glutMainLoop();

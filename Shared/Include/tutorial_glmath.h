@@ -67,7 +67,7 @@ namespace tutorial
 
 	// Helpers
 	GLfloat GetRadianFromDegree(GLfloat degree);
-	mat4x4 GetPerspectiveProjectionMatrix(GLfloat FOV);
+	mat4x4 GetPerspectiveProjectionMatrix(GLfloat FOVyInDegree, GLfloat windowAspectRatio, GLfloat nearZ, GLfloat farZ);
 }
 
 
