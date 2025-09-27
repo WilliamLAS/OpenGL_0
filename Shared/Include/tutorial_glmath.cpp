@@ -147,15 +147,15 @@ namespace tutorial
 		return degree * (pi / 180.0f);
 	}
 
-	mat4x4 GetPerspectiveProjectionMatrix(GLfloat FOVInDegree)
+	mat4x4 GetPerspectiveProjectionMatrix(GLfloat yAxisFOVInDegree, GLfloat windowAspectRatio, GLfloat nearZ, GLfloat farZ)
 	{
-		GLfloat tanHalfFOV = tanf(GetRadianFromDegree(FOVInDegree / 2.0f));
-		float f = 1 / tanHalfFOV;
+		GLfloat a = 1 / tanf(GetRadianFromDegree(yAxisFOVInDegree / 2.0f));
+		float zRange = farZ - nearZ;
 
 		return mat4x4(
-			f,		0.0f, 0.0f, 0.0f,
-			0.0f,	f, 0.0f, 0.0f,
-			0.0f,	0.0f, 1.0f, 0.0f,
-			0.0f,	0.0f, 1.0f, 0.0f);
+			a / windowAspectRatio,	0.0f,	0.0f, 0.0f,
+			0.0f,					a,		0.0f, 0.0f,
+			0.0f,					0.0f,	1.0f, 0.0f,
+			0.0f,					0.0f,	1.0f, 0.0f);
 	}
 }
