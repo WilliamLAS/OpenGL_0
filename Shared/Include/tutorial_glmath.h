@@ -8,10 +8,7 @@
 
 namespace tutorial
 {
-	extern GLfloat const pi;
-	extern GLfloat const epsilon;
-
-
+	// Definitions
 	struct vec3
 	{
 		GLfloat x;
@@ -43,6 +40,7 @@ namespace tutorial
 		);
 
 		mat4x4 operator *(mat4x4 const& right) const;
+		mat4x4& ToIdentity();
 	};
 
 
@@ -56,11 +54,20 @@ namespace tutorial
 		quat();
 		quat(vec3 direction, GLfloat angleInDegree);
 
-		mat4x4 Getmat4x4() const;
+		mat4x4 GetMatrix() const;
 	};
 
 
+
+	// Variables
+	extern GLfloat const pi;
+	extern GLfloat const epsilon;
+
+
+
+	// Helpers
 	GLfloat GetRadianFromDegree(GLfloat degree);
+	mat4x4 GetPerspectiveProjectionMatrix(GLfloat FOV);
 }
 
 

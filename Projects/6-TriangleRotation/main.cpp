@@ -241,7 +241,7 @@ void DrawTriangle()
 		speed *= -1.0f;
 	}
 
-	tutorial::mat4x4 rotation = tutorial::quat(tutorial::vec3(0.0f, 0.0f, 1.0f), angleInDegree).Getmat4x4();
+	tutorial::mat4x4 rotation = tutorial::quat(tutorial::vec3(0.0f, 0.0f, 1.0f), angleInDegree).GetMatrix();
 
 	glUseProgram(triangleTransformationShaderProgram.id);
 	glUniformMatrix4fv(triangleTransformationShaderProgram.rotationLocation, 1, GL_TRUE, &rotation.data[0][0]);

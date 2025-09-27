@@ -5,10 +5,7 @@
 
 namespace tutorial
 {
-	GLfloat const pi = acosf(-1.0f);
-	GLfloat const epsilon = 1.1920929e-07F;
-
-
+	// Definitions
 	vec3::vec3()
 		: x(0.0f), y(0.0f), z(0.0f)
 	{ }
@@ -82,6 +79,15 @@ namespace tutorial
 		return result;
 	}
 
+	mat4x4& mat4x4::ToIdentity()
+	{
+		data[0][0] = 1.0f; data[0][1] = 0.0f; data[0][2] = 0.0f; data[0][3] = 0.0f;
+		data[1][0] = 0.0f; data[1][1] = 1.0f; data[1][2] = 0.0f; data[1][3] = 0.0f;
+		data[2][0] = 0.0f; data[2][1] = 0.0f; data[2][2] = 1.0f; data[2][3] = 0.0f;
+		data[3][0] = 0.0f; data[3][1] = 0.0f; data[3][2] = 0.0f; data[3][3] = 1.0f;
+		return *this;
+	}
+
 
 	quat::quat()
 		: quat(vec3(0.0f, 0.0f, 0.0f), 1.0f)
@@ -107,7 +113,7 @@ namespace tutorial
 		w = std::cosf(halfAngleInRadian);
 	}
 
-	mat4x4 quat::Getmat4x4() const
+	mat4x4 quat::GetMatrix() const
 	{
 		float xx = x * x;
 		float yy = y * y;
@@ -128,8 +134,28 @@ namespace tutorial
 	}
 
 
+
+	// Variables
+	GLfloat const pi = acosf(-1.0f);
+	GLfloat const epsilon = 1.1920929e-07F;
+
+
+
+	// Helpers
 	GLfloat GetRadianFromDegree(GLfloat degree)
 	{
 		return degree * (pi / 180.0f);
+	}
+
+	mat4x4 GetPerspectiveProjectionMatrix(GLfloat FOVInDegree)
+	{
+		GLfloat tanHalfFOV = tanf(GetRadianFromDegree(FOVInDegree / 2.0f));
+		float f = 1 / tanHalfFOV;
+
+		return mat4x4(
+			f,		0.0f, 0.0f, 0.0f,
+			0.0f,	f, 0.0f, 0.0f,
+			0.0f,	0.0f, 1.0f, 0.0f,
+			0.0f,	0.0f, 1.0f, 0.0f);
 	}
 }

@@ -247,7 +247,7 @@ void DrawTriangle()
 		0.0f, 0.0f, 0.25f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
-	tutorial::mat4x4 quaternion = tutorial::quat(tutorial::vec3(0.0f, 0.0f, 1.0f), angleInDegree).Getmat4x4();
+	tutorial::mat4x4 quaternion = tutorial::quat(tutorial::vec3(0.0f, 0.0f, 1.0f), angleInDegree).GetMatrix();
 	tutorial::mat4x4 translate = tutorial::mat4x4(
 		1.0f, 0.0f, 0.0f, 0.5f,
 		0.0f, 1.0f, 0.0f, 0.0f,

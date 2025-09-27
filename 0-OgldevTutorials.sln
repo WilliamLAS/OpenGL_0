@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3-FirstTriangleShader", "Pr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4-TriangleScale", "Projects\4-TriangleScale\4.vcxproj", "{225209E7-7F3E-4A54-A3CC-BA276A227A6E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4-TriangleTransformation", "Projects\5-TriangleTranslation\5.vcxproj", "{D9802E60-CD44-443C-990A-590A34E10E62}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "5-TriangleTranslation", "Projects\5-TriangleTranslation\5.vcxproj", "{D9802E60-CD44-443C-990A-590A34E10E62}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6-TriangleRotation", "Projects\6-TriangleRotation\6.vcxproj", "{F98F360F-0081-459B-93C3-A2A0D2AAF219}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8-TriangleInterpolation", "Projects\8-TriangleInterpolation\8.vcxproj", "{47A8A8AB-A85F-4CBF-AEA4-4B684671269D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "9-TriangleIndexedDraw", "Projects\9-TriangleIndexedDraw\9.vcxproj", "{0FD64546-015D-42D9-9B8E-E1E727540ECF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10-CubeProjection", "Projects\10-CubeProjection\10.vcxproj", "{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,14 @@ Global
 		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Release|x64.Build.0 = Release|x64
 		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Release|x86.ActiveCfg = Release|Win32
 		{0FD64546-015D-42D9-9B8E-E1E727540ECF}.Release|x86.Build.0 = Release|Win32
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Debug|x64.ActiveCfg = Debug|x64
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Debug|x64.Build.0 = Debug|x64
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Debug|x86.ActiveCfg = Debug|Win32
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Debug|x86.Build.0 = Debug|Win32
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Release|x64.ActiveCfg = Release|x64
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Release|x64.Build.0 = Release|x64
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Release|x86.ActiveCfg = Release|Win32
+		{0C5CD0A5-AA3B-4C87-A4B5-276D68E7C3A5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

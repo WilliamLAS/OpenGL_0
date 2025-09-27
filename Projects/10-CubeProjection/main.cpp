@@ -118,35 +118,31 @@ struct
 		{ }
 	};
 	
-	GLuint VBOId = 0;
-	GLuint VEOId = 0;
-	GLuint VAOId = 0;
+	GLuint VBOId = 0; // Vertex Buffer Object
+	GLuint VEOId = 0; // Vertex Array Object
+	GLuint VAOId = 0; // Vertex Element Object
 	
 	GLuint shaderProgramObjectId = 0;
-	GLint modelLocation = -1;
+	GLint MVPLocation = -1;
 
-	tutorial::mat4x4 scale = tutorial::mat4x4(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
+	tutorial::mat4x4 projection = tutorial::GetPerspectiveProjectionMatrix(90.0f);
+
+	tutorial::mat4x4 scale = tutorial::mat4x4().ToIdentity();
+	tutorial::mat4x4 rotation = tutorial::quat().GetMatrix();
 	tutorial::mat4x4 translation = tutorial::mat4x4(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-	tutorial::mat4x4 rotation = tutorial::quat().GetMatrix();
+		0.0f, 0.0f, 1.0f, 2.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
 
 
 	GLboolean InitializeVBO()
 	{
 		coutWorkStart();
 		std::uniform_real_distribution<GLfloat> randomRangeGenerator = std::uniform_real_distribution<GLfloat>(0.0f, 1.0f);
-		Vertex vertexes[19];
+		Vertex vertexes[8];
 
-		for (size_t i = 0; i < 19; i++)
+		for (size_t i = 0; i < 8; i++)
 		{
 			vertexes[i].diffuseColor = tutorial::vec3(
 				randomRangeGenerator(randomGeneratorEngine),
@@ -155,30 +151,14 @@ struct
 			);
 		}
 
-		// Top
-		vertexes[0].worldPosition = tutorial::vec3(1.0f, 1.0f, 0.0f);
-		vertexes[1].worldPosition = tutorial::vec3(0.75f, 1.0f, 0.0f);
-		vertexes[2].worldPosition = tutorial::vec3(0.5f, 1.0f, 0.0f);
-		vertexes[3].worldPosition = tutorial::vec3(0.25f, 1.0f, 0.0f);
-		vertexes[4].worldPosition = tutorial::vec3(0.0f, 1.0f, 0.0f);
-		vertexes[5].worldPosition = tutorial::vec3(-0.25f, 1.0f, 0.0f);
-		vertexes[6].worldPosition = tutorial::vec3(-0.5f, 1.0f, 0.0f);
-		vertexes[7].worldPosition = tutorial::vec3(-0.75f, 1.0f, 0.0f);
-		vertexes[8].worldPosition = tutorial::vec3(-1.0f, 1.0f, 0.0f);
-
-		// Center
-		vertexes[9].worldPosition = tutorial::vec3(0.0f, 0.0f, 0.0f);
-
-		// Bottom
-		vertexes[10].worldPosition = tutorial::vec3(-1.0f, -1.0f, 0.0f);
-		vertexes[11].worldPosition = tutorial::vec3(-0.75f, -1.0f, 0.0f);
-		vertexes[12].worldPosition = tutorial::vec3(-0.5f, -1.0f, 0.0f);
-		vertexes[13].worldPosition = tutorial::vec3(-0.25f, -1.0f, 0.0f);
-		vertexes[14].worldPosition = tutorial::vec3(0.0f, -1.0f, 0.0f);
-		vertexes[15].worldPosition = tutorial::vec3(0.25f, -1.0f, 0.0f);
-		vertexes[16].worldPosition = tutorial::vec3(0.5f, -1.0f, 0.0f);
-		vertexes[17].worldPosition = tutorial::vec3(0.75f, -1.0f, 0.0f);
-		vertexes[18].worldPosition = tutorial::vec3(1.0f, -1.0f, 0.0f);
+		vertexes[0].worldPosition = tutorial::vec3(0.5f, 0.5f, 0.5f);
+		vertexes[1].worldPosition = tutorial::vec3(-0.5f, 0.5f, -0.5f);
+		vertexes[2].worldPosition = tutorial::vec3(-0.5f, 0.5f, 0.5f);
+		vertexes[3].worldPosition = tutorial::vec3(0.5f, -0.5f, -0.5f);
+		vertexes[4].worldPosition = tutorial::vec3(-0.5f, -0.5f, -0.5f);
+		vertexes[5].worldPosition = tutorial::vec3(0.5f, 0.5f, -0.5f);
+		vertexes[6].worldPosition = tutorial::vec3(0.5f, -0.5f, 0.5f);
+		vertexes[7].worldPosition = tutorial::vec3(-0.5f, -0.5f, 0.5f);
 
 		glGenBuffers(1, &VBOId);
 		glBindBuffer(GL_ARRAY_BUFFER, VBOId);
@@ -194,31 +174,18 @@ struct
 		coutWorkStart();
 
 		GLuint elements[][3] = {
-			// Right
-			{9, 18, 0},
-
-			// Top
-			{9, 0, 1},
-			{9, 1, 2},
-			{9, 2, 3},
-			{9, 3, 4},
-			{9, 4, 5},
-			{9, 5, 6},
-			{9, 6, 7},
-			{9, 7, 8},
-
-			// Left
-			{9, 8, 10},
-
-			// Botom
-			{9, 10, 11},
-			{9, 11, 12},
-			{9, 12, 13},
-			{9, 13, 14},
-			{9, 14, 15},
-			{9, 15, 16},
-			{9, 16, 17},
-			{9, 17, 18},
+			{0, 1, 2},
+			{1, 3, 4},
+			{5, 6, 3},
+			{7, 3, 6},
+			{2, 4, 7},
+			{0, 7, 6},
+			{0, 5, 1},
+			{1, 5, 3},
+			{5, 0, 6},
+			{7, 4, 3},
+			{2, 1, 4},
+			{0, 2, 7},
 		};
 
 		glGenBuffers(1, &VEOId);
@@ -290,31 +257,31 @@ struct
 		}
 
 		GLuint shaders[2] = { 0, 0 };
-		initializationResult = InitializeShaderObject(&shaders[0], GL_VERTEX_SHADER, "triangle.vert");
+		initializationResult = InitializeShaderObject(&shaders[0], GL_VERTEX_SHADER, "cube.vert");
 		if (initializationResult == GL_FALSE)
 		{
 			cerrWorkFail();
 			return GL_FALSE;
 		}
 
-		initializationResult = InitializeShaderObject(&shaders[1], GL_FRAGMENT_SHADER, "triangle.frag");
+		initializationResult = InitializeShaderObject(&shaders[1], GL_FRAGMENT_SHADER, "cube.frag");
 		if (initializationResult == GL_FALSE)
 		{
 			cerrWorkFail();
 			return GL_FALSE;
 		}
 
-		initializationResult = InitializeShaderProgramObject(&shaderProgramObjectId, 2, shaders, "Triangle Shader Program");
+		initializationResult = InitializeShaderProgramObject(&shaderProgramObjectId, 2, shaders, "Cube Shader Program");
 		if (initializationResult == GL_FALSE)
 		{
 			cerrWorkFail();
 			return GL_FALSE;
 		}
 
-		modelLocation = glGetUniformLocation(shaderProgramObjectId, "model");
-		if (modelLocation < 0)
+		MVPLocation = glGetUniformLocation(shaderProgramObjectId, "MVP");
+		if (MVPLocation < 0)
 		{
-			std::cout << "Cant find modelLocation. \n";
+			std::cout << "Cant find MVPLocation. \n";
 			cerrWorkFail();
 			return GL_FALSE;
 		}
@@ -329,16 +296,17 @@ struct
 	void Draw()
 	{
 		tutorial::mat4x4 model = translation * rotation * scale;
+		tutorial::mat4x4 MVP = projection * model; // Model, View, Projection matrix
 
 		glUseProgram(shaderProgramObjectId);
-		glUniformMatrix4fv(modelLocation, 1, GL_TRUE, &model.data[0][0]);
+		glUniformMatrix4fv(MVPLocation, 1, GL_TRUE, &MVP.data[0][0]);
 		glBindVertexArray(VAOId);
-		glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		glUseProgram(0);
 	}
 
-} triangle;
+} cube;
 
 
 
@@ -399,7 +367,10 @@ GLboolean InitializeGLSettings()
 	coutWorkStart();
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
 
 	coutWorkSuccess();
 	return GL_TRUE;
@@ -410,10 +381,19 @@ GLboolean InitializeGLSettings()
 // Update
 void OnDisplay()
 {
+	static GLfloat cubeRotation = 0.0f;
+	static GLfloat cubeRotationSpeed = 1.0f;
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	Sleep(25);
-	triangle.Draw();
+
+	cubeRotation += cubeRotationSpeed;
+	if (cubeRotation >= 360.0f)
+		cubeRotation = 0.0f;
+
+	cube.rotation = tutorial::quat(tutorial::vec3(0.0f, 1.0f, 0.0f), cubeRotation).GetMatrix();
+	cube.Draw();
 
 	glutPostRedisplay();
 	glutSwapBuffers();
@@ -424,7 +404,7 @@ int main(int argCount, char* args[])
 	std::random_device randomSeedGenerator = std::random_device();
 	randomGeneratorEngine = std::mt19937(randomSeedGenerator());
 
-	GLboolean initializationResult = InitializeGLWindow(&argCount, args, "9 - Triangle Indexed Draw");
+	GLboolean initializationResult = InitializeGLWindow(&argCount, args, "10 - Cube Projection");
 	if (initializationResult == GL_FALSE)
 		return -1;
 
@@ -436,7 +416,7 @@ int main(int argCount, char* args[])
 	if (initializationResult == GL_FALSE)
 		return -1;
 	
-	initializationResult = triangle.Initialize();
+	initializationResult = cube.Initialize();
 	if (initializationResult == GL_FALSE)
 		return -1;
 	
