@@ -18,11 +18,13 @@ namespace tutorial
 		vec3();
 		vec3(GLfloat _x, GLfloat _y, GLfloat _z);
 
+		vec3 operator *(GLfloat const& right) const;
+		vec3& ToNormalized();
+
 		GLfloat GetSquaredMagnitude() const;
 		GLfloat GetMagnitude() const;
 		vec3 GetNormalized() const;
 		GLboolean IsNormalized() const;
-		vec3 operator *(GLfloat const& right) const;
 	};
 
 
@@ -34,9 +36,9 @@ namespace tutorial
 		mat4x4();
 		mat4x4(
 			GLfloat row00, GLfloat row01, GLfloat row02, GLfloat row03,
-			GLfloat row11, GLfloat row12, GLfloat row13, GLfloat row14,
-			GLfloat row21, GLfloat row22, GLfloat row23, GLfloat row24,
-			GLfloat row31, GLfloat row32, GLfloat row33, GLfloat row34
+			GLfloat row10, GLfloat row11, GLfloat row12, GLfloat row13,
+			GLfloat row20, GLfloat row21, GLfloat row22, GLfloat row23,
+			GLfloat row30, GLfloat row31, GLfloat row32, GLfloat row33
 		);
 
 		mat4x4 operator *(mat4x4 const& right) const;
@@ -52,8 +54,13 @@ namespace tutorial
 		GLfloat w;
 
 		quat();
-		quat(vec3 direction, GLfloat angleInDegree);
+		quat& FromEuler(GLfloat pitchXInDegree, GLfloat yawYInDegree, GLfloat rollZInDegree);
+		quat& FromAxisAngle(vec3 axis, GLfloat angleInDegree);
 
+		quat& ToIdentity();
+		quat& ToInverted();
+
+		quat GetInverse() const;
 		mat4x4 GetMatrix() const;
 	};
 

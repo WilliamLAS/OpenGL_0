@@ -14,6 +14,30 @@ namespace tutorial
 		: x(_x), y(_y), z(_z)
 	{ }
 
+	vec3 vec3::operator *(GLfloat const& right) const
+	{
+		return vec3(x * right, y * right, z * right);
+	}
+
+	vec3& vec3::ToNormalized()
+	{
+		float magnitude = GetMagnitude();
+		if (magnitude > 0.0f)
+		{
+			x /= magnitude;
+			y /= magnitude;
+			z /= magnitude;
+		}
+		else
+		{
+			x = 0.0f;
+			y = 0.0f;
+			z = 0.0f;
+		}
+
+		return *this;
+	}
+
 	GLfloat vec3::GetSquaredMagnitude() const
 	{
 		return (x * x) + (y * y) + (z * z);
@@ -26,21 +50,12 @@ namespace tutorial
 
 	vec3 vec3::GetNormalized() const
 	{
-		float magnitude = GetMagnitude();
-		if (magnitude > 0.0f)
-			return vec3(x / magnitude, y / magnitude, z / magnitude);
-		else
-			return vec3(0.0f, 0.0f, 0.0f);
+		return vec3(*this).ToNormalized();
 	}
 
 	GLboolean vec3::IsNormalized() const
 	{
 		return std::fabsf(GetSquaredMagnitude() - 1.0f) < epsilon;
-	}
-
-	vec3 vec3::operator *(GLfloat const & right) const
-	{
-		return vec3(x * right, y * right, z * right);
 	}
 
 
@@ -90,27 +105,65 @@ namespace tutorial
 
 
 	quat::quat()
-		: quat(vec3(0.0f, 0.0f, 0.0f), 1.0f)
-	{ }
-
-	quat::quat(vec3 direction, GLfloat angleInDegree)
 	{
-		if (direction.GetSquaredMagnitude() == 0.0f)
-		{
-			x = 0.0f;
-			y = 0.0f;
-			z = 0.0f;
-			w = 1.0f; // Because cos(angle/2) = cos(0) = 1
-			return;
-		}
+		ToIdentity();
+	}
 
-		direction = direction.GetNormalized();
+	quat& quat::FromEuler(GLfloat pitchXInDegree, GLfloat yawYInDegree, GLfloat rollZInDegree)
+	{
+		float halfPitchXInRadian = -GetRadianFromDegree(pitchXInDegree) * 0.5f;
+		float halfYawYInRadian = GetRadianFromDegree(yawYInDegree) * 0.5f;
+		float halfRollZInRadian = -GetRadianFromDegree(-rollZInDegree) * 0.5f;
+
+		float sinX = sinf(halfPitchXInRadian);
+		float cosX = cosf(halfPitchXInRadian);
+        float sinY = sinf(halfYawYInRadian);
+		float cosY = cosf(halfYawYInRadian);
+        float sinZ = sinf(halfRollZInRadian);
+		float cosZ = cosf(halfRollZInRadian);
+
+        x = sinX * cosY * cosZ - cosX * sinY * sinZ; // pitch
+        y = cosX * sinY * cosZ + sinX * cosY * sinZ; // yaw
+        z = cosX * cosY * sinZ - sinX * sinY * cosZ; // roll
+        w = cosX * cosY * cosZ + sinX * sinY * sinZ;
+		return *this;
+	}
+
+	quat& quat::FromAxisAngle(vec3 axis, GLfloat angleInDegree)
+	{
+		if (axis.GetSquaredMagnitude() == 0.0f)
+			return ToIdentity();
+
+		axis = axis.GetNormalized();
 		float halfAngleInRadian = GetRadianFromDegree(angleInDegree) * 0.5f;
 
-		x = direction.x * std::sinf(halfAngleInRadian);
-		y = direction.y * std::sinf(halfAngleInRadian);
-		z = direction.z * std::sinf(halfAngleInRadian);
+		x = axis.x * std::sinf(-halfAngleInRadian);
+		y = axis.y * std::sinf(halfAngleInRadian);
+		z = axis.z * std::sinf(-halfAngleInRadian);
 		w = std::cosf(halfAngleInRadian);
+		return *this;
+	}
+
+	quat& quat::ToIdentity()
+	{
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
+		w = 1.0f; // Because cos(angle/2) = cos(0) = 1
+		return *this;
+	}
+
+	quat& quat::ToInverted()
+	{
+		x = -x;
+		y = -y;
+		z = -z;
+		return *this;
+	}
+
+	quat quat::GetInverse() const
+	{
+		return quat(*this).ToInverted();
 	}
 
 	mat4x4 quat::GetMatrix() const
@@ -153,9 +206,9 @@ namespace tutorial
 		float zRange = farZ - nearZ;
 
 		return mat4x4(
-			xyScale / windowAspectRatio,	0.0f,	0.0f,								0.0f,
-			0.0f,					xyScale,		0.0f,								0.0f,
-			0.0f,					0.0f,			-(farZ + nearZ) / zRange,			-(2.0f * farZ * nearZ) / zRange,
-			0.0f,					0.0f,			-1.0f,								0.0f);
+			xyScale / windowAspectRatio,	0.0f,			0.0f,								0.0f,
+			0.0f,							xyScale,		0.0f,								0.0f,
+			0.0f,							0.0f,			-(farZ + nearZ) / zRange,			-(2.0f * farZ * nearZ) / zRange,
+			0.0f,							0.0f,			-1.0f,								0.0f);
 	}
 }

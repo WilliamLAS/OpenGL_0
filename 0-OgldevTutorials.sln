@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10-CubeProjection", "Projec
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11-CubeProjectionEnhanced", "Projects\11-CubeProjectionEnhanced\11.vcxproj", "{A2593CD3-4462-44D2-9AD1-EFFD450FF0ED}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12-Camera", "Projects\12-Camera\12.vcxproj", "{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -131,6 +133,14 @@ Global
 		{A2593CD3-4462-44D2-9AD1-EFFD450FF0ED}.Release|x64.Build.0 = Release|x64
 		{A2593CD3-4462-44D2-9AD1-EFFD450FF0ED}.Release|x86.ActiveCfg = Release|Win32
 		{A2593CD3-4462-44D2-9AD1-EFFD450FF0ED}.Release|x86.Build.0 = Release|Win32
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Debug|x64.ActiveCfg = Debug|x64
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Debug|x64.Build.0 = Debug|x64
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Debug|x86.ActiveCfg = Debug|Win32
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Debug|x86.Build.0 = Debug|Win32
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Release|x64.ActiveCfg = Release|x64
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Release|x64.Build.0 = Release|x64
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Release|x86.ActiveCfg = Release|Win32
+		{B4C2C391-8C2B-4D30-A83C-E4F8424AF732}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

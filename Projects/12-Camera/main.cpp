@@ -102,14 +102,39 @@ GLboolean InitializeShaderProgramObject(GLuint* shaderProgramObjectId, const siz
 // Variables
 int windowWidth = 400;
 int windowHeight = 300;
-int projectionNearZ = 1.0f;
-int projectionFarZ = 10.0f;
 
-tutorial::mat4x4 projection = tutorial::mat4x4().ToIdentity();
 std::mt19937 randomGeneratorEngine = std::mt19937(12345);
 
-struct
+struct Camera
 {
+	tutorial::quat rotation = tutorial::quat();
+	tutorial::vec3 translation = tutorial::vec3();
+
+	float FOVyInDegree = 90.0f;
+	float nearZ = 1.0f;
+	float farZ = 10.0f;
+
+
+	tutorial::mat4x4 GetProjection() const
+	{
+		return tutorial::GetPerspectiveProjectionMatrix(FOVyInDegree, (GLfloat)windowWidth / (GLfloat)windowHeight, nearZ, farZ);
+	}
+
+	tutorial::mat4x4 GetView() const
+	{
+		tutorial::mat4x4 inverseTranslation = tutorial::mat4x4(
+			1.0f, 0.0f, 0.0f, -translation.x,
+			0.0f, 1.0f, 0.0f, -translation.y,
+			0.0f, 0.0f, 1.0f, -translation.z,
+			0.0f, 0.0f, 0.0f, 1.0f);
+
+		return inverseTranslation * rotation.GetInverse().GetMatrix();
+	}
+} camera;
+
+class
+{
+private:
 	struct Vertex
 	{
 		tutorial::vec3 worldPosition;
@@ -117,27 +142,22 @@ struct
 
 		Vertex()
 			: Vertex(tutorial::vec3(), tutorial::vec3(1.0f, 1.0f, 1.0f))
-		{ }
+		{
+		}
 
 		Vertex(const tutorial::vec3& worldPosition, const tutorial::vec3& diffuseColor)
 			: worldPosition(worldPosition), diffuseColor(diffuseColor)
-		{ }
+		{
+		}
 	};
-	
+
+
 	GLuint VBOId = 0; // Vertex Buffer Object
 	GLuint VEOId = 0; // Vertex Array Object
 	GLuint VAOId = 0; // Vertex Element Object
 	GLuint shaderProgramObjectId = 0;
-	
-	GLint MVPLocation = -1;
 
-	tutorial::mat4x4 scale = tutorial::mat4x4().ToIdentity();
-	tutorial::mat4x4 rotation = tutorial::quat().GetMatrix();
-	tutorial::mat4x4 translation = tutorial::mat4x4(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 2.0f, // If camera is facing towards -z, why increasing z doesnt brings vertex towards the back of the camera (aka Point Of View)?
-		0.0f, 0.0f, 0.0f, 1.0f);
+	GLint PVMLocation = -1; // Projection, View, Model matrix
 
 
 	GLboolean InitializeVBO()
@@ -235,6 +255,13 @@ struct
 		return GL_TRUE;
 	}
 
+
+public:
+	tutorial::vec3 scale = tutorial::vec3(1.0f, 1.0f, 1.0f);
+	tutorial::quat rotation = tutorial::quat();
+	tutorial::vec3 translation = tutorial::vec3();
+
+
 	GLboolean Initialize()
 	{
 		coutWorkStart();
@@ -282,10 +309,10 @@ struct
 			return GL_FALSE;
 		}
 
-		MVPLocation = glGetUniformLocation(shaderProgramObjectId, "MVP");
-		if (MVPLocation < 0)
+		PVMLocation = glGetUniformLocation(shaderProgramObjectId, "MVP");
+		if (PVMLocation < 0)
 		{
-			std::cout << "Cant find MVPLocation. \n";
+			std::cout << "Cant find PVMLocation. \n";
 			cerrWorkFail();
 			return GL_FALSE;
 		}
@@ -297,13 +324,29 @@ struct
 		return GL_TRUE;
 	}
 
-	void Draw()
+	tutorial::mat4x4 GetModel() const
 	{
-		tutorial::mat4x4 model = translation * rotation * scale;
-		tutorial::mat4x4 MVP = projection * model; // Model, View, Projection matrix
+		tutorial::mat4x4 scaleMatrix = tutorial::mat4x4(
+			scale.x, 0.0f, 0.0f, 0.0f,
+			0.0f, scale.y, 0.0f, 0.0f,
+			0.0f, 0.0f, scale.z, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
 
+		tutorial::mat4x4 rotationMatrix = rotation.GetMatrix();
+
+		tutorial::mat4x4 translationMatrix = tutorial::mat4x4(
+			1.0f, 0.0f, 0.0f, translation.x,
+			0.0f, 1.0f, 0.0f, translation.y,
+			0.0f, 0.0f, 1.0f, translation.z,
+			0.0f, 0.0f, 0.0f, 1.0f);
+
+		return translationMatrix * rotationMatrix * scaleMatrix;
+	}
+
+	void Draw(tutorial::mat4x4 PVM) const // Model, View, Projection matrix
+	{
 		glUseProgram(shaderProgramObjectId);
-		glUniformMatrix4fv(MVPLocation, 1, GL_TRUE, &MVP.data[0][0]);
+		glUniformMatrix4fv(PVMLocation, 1, GL_TRUE, &PVM.data[0][0]);
 		glBindVertexArray(VAOId);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
@@ -373,7 +416,7 @@ GLboolean InitializeGLSettings()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 
 	coutWorkSuccess();
@@ -385,19 +428,22 @@ GLboolean InitializeGLSettings()
 // Update
 void OnDisplay()
 {
-	static GLfloat cubeRotation = 0.0f;
-	static GLfloat cubeRotationSpeed = 1.0f;
+	static GLfloat rotationDegree = 0.0f;
+	static GLfloat rotationDegreeSpeed = 1.0f;
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	Sleep(25);
 
-	cubeRotation += cubeRotationSpeed;
-	if (cubeRotation >= 360.0f)
-		cubeRotation = 0.0f;
+	rotationDegree += rotationDegreeSpeed;
+	if (rotationDegree >= 360.0f)
+		rotationDegree = 0.0f;
 
-	cube.rotation = tutorial::quat(tutorial::vec3(0.0f, 1.0f, 0.0f), cubeRotation).GetMatrix();
-	cube.Draw();
+	tutorial::mat4x4 PVM = camera.GetProjection() * camera.GetView() * cube.GetModel(); // Projection, View, Model matrix
+	camera.rotation = tutorial::quat().FromAxisAngle(tutorial::vec3(0.0f, 0.0f, -1.0f), rotationDegree);
+	cube.translation = tutorial::vec3(0.0f, 0.0f, -2.0f);
+	cube.rotation = tutorial::quat().FromAxisAngle(tutorial::vec3(0.0f, 1.0f, 0.0f), rotationDegree);
+	cube.Draw(PVM);
 
 	glutPostRedisplay();
 	glutSwapBuffers();
@@ -409,7 +455,6 @@ void OnWindowSizeChanged(int width, int height)
 	windowHeight = height;
 
 	glViewport(0, 0, windowWidth, windowHeight);
-	projection = tutorial::GetPerspectiveProjectionMatrix(90.0f, (GLfloat)windowWidth / (GLfloat)windowHeight, projectionNearZ, projectionFarZ);
 }
 
 int main(int argCount, char* args[])
@@ -417,7 +462,7 @@ int main(int argCount, char* args[])
 	std::random_device randomSeedGenerator = std::random_device();
 	randomGeneratorEngine = std::mt19937(randomSeedGenerator());
 
-	GLboolean initializationResult = InitializeGLWindow(&argCount, args, "11 - Cube Enhanced Projection");
+	GLboolean initializationResult = InitializeGLWindow(&argCount, args, "12 - Camera");
 	if (initializationResult == GL_FALSE)
 		return -1;
 

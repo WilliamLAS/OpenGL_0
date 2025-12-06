@@ -392,7 +392,7 @@ void OnDisplay()
 	if (cubeRotation >= 360.0f)
 		cubeRotation = 0.0f;
 
-	cube.rotation = tutorial::quat(tutorial::vec3(0.0f, 1.0f, 0.0f), cubeRotation).GetMatrix();
+	cube.rotation = tutorial::quat().FromAxisAngle(tutorial::vec3(0.0f, 1.0f, 0.0f), cubeRotation).GetMatrix();
 	cube.Draw();
 
 	glutPostRedisplay();
